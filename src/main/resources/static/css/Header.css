@@ -1,0 +1,146 @@
+
+body{
+    background-image: linear-gradient(to bottom, rgb(255, 186, 250), rgb(255, 255, 255));
+    /*background-image: linear-gradient(to bottom, #c7ff8f, rgb(255, 255, 255));*/
+    /*background-image: linear-gradient(to bottom, #ff7d50, rgb(255, 255, 255));*/
+    /*background-image: linear-gradient(to bottom, #fff47c, rgb(255, 255, 255));*/
+    /*background-image: linear-gradient(to bottom, #66bafc, rgb(255, 255, 255));*/
+    margin: 0px;
+    background-repeat: no-repeat;
+    background-size: 100%, 100%;
+    background-attachment: fixed;
+    transition: background 0.5s linear;
+}
+
+nav{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    background-color: rgb(21, 21, 21);
+    /* border-radius: 8px; */
+    /* box-shadow: 0 2px 3px rgba(0, 0,0,1); */
+    z-index: 9;
+}
+
+nav a{
+    position: relative;
+    display: block;
+    float: left;
+    font-size: 15px;
+    line-height: 50px;
+    width: 100px;
+    height: 50px;
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    z-index: 10;
+}
+
+nav a:nth-child(1){
+    width: 100px;
+    float: left;
+}
+nav a:nth-child(2) {
+    width: 100px;
+    float: right;
+}
+nav a:nth-child(3) {
+    width: 100px;
+    float: right;
+}
+nav a:nth-child(4) {
+    width: 100px;
+    float: right;
+}
+
+/* .start-首页, */
+nav .animation{
+    position: absolute;
+    height: 100%;
+    width: 100px;
+    background-color: #6956f7;
+    z-index: 9;
+    /* border-radius: 8px; */
+    transition: all 0.2s;
+    display: none;
+}
+
+/* .start-首页, */
+nav a:nth-child(1):hover~.animation{
+    width: 100px;
+    left: 0px;
+    display: inline;
+}
+/* .start-用户, */
+nav a:nth-child(2):hover~.animation {
+    width: 100px;
+    right: 0px;
+    display: inline;
+}
+/* .start-订单, */
+nav a:nth-child(3):hover~.animation {
+    width: 100px;
+    right: 100px;
+    display: inline;
+}
+
+/* .start-购物车, */
+nav a:nth-child(4):hover~.animation {
+    width: 100px;
+    right: 200px;
+    display: inline;
+}
+
+nav a:nth-child(4):hover~.info-box{
+    width: 160px;
+    height: 72px;
+    position: absolute;
+    top: 54px;
+    right: 170px;
+    border-radius: 8px;
+    z-index: 8;
+    box-shadow: 0 2px 3px rgb(18, 17, 17);
+    background-color: #6956f7;
+}
+
+.info-box p {
+    display: none;
+    margin-left: 6px;
+    font-size: 15px;
+    color: rgb(255, 255, 255);
+    margin-top: 7px;
+}
+nav a:nth-child(4):hover~.info-box p{
+    display: flex;
+}
+
+.back-color{
+    margin-top: 25px;
+    height: 100px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    display: none;
+}
+.back-color span{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    position: relative;
+
+}
+.spring{
+    background: rgba(199, 255, 143, 0.78);
+}
+.summer{
+    background: rgba(255, 116, 66, 0.78);
+}
+.autumn{
+    background: rgba(255, 247, 95, 0.78);
+}
+.winter{
+    background: rgba(102, 186, 252, 0.78);
+}

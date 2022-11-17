@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    name: defaultDataSource
+    url: jdbc:mysql://localhost:3306/MMall?useUnicode=True&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 010606Jzh!!!
+
+  application:
+    name=MMall
+
+server:
+  port=8080
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+

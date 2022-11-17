@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.mapper.OrderMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="oid">
+        INSERT INTO t_order (uid,pid,price,state)
+        VALUES (#{uid},#{pid},#{price},#{state})
+    </insert>
+    <delete id="delete">
+        DELETE FROM t_order
+        WHERE oid = #{oid}
+    </delete>
+    <select id="selectByOid" resultType="com.mmall.pojo.Order">
+        SELECT * FROM t_order
+        WHERE oid=#{oid}
+    </select>
+    <select id="selectByUid" resultType="com.mmall.util.OrderInfo">
+        SELECT t_order.oid,t_order.uid,t_order.pid,t_order.price,t_order.state,t_product.title,t_product.description,t_product.image
+        FROM t_order,t_product
+        WHERE t_order.uid=#{uid} AND t_order.pid = t_product.id
+    </select>
+    <update id="updateState">
+        UPDATE t_order
+        SET state = #{arg1}
+        WHERE oid=#{arg0}
+    </update>
+    <select id="selectState" resultType="String">
+        SELECT state
+        FROM t_order
+        WHERE oid=#{oid}
+    </select>
+    <select id="selectAll" resultType="com.mmall.util.AdminOrder">
+        SELECT t_order.oid,t_order.uid,t_order.pid,t_order.price,t_order.state,t_product.title,t_product.image,t_user.username
+        FROM t_order,t_product,t_user
+        WHERE t_order.pid = t_product.id AND t_order.uid = t_user.uid
+        ORDER BY uid
+    </select>
+</mapper>

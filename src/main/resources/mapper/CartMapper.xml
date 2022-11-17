@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.mapper.CartMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="cid">
+        INSERT INTO t_cart (uid,pid,price)
+        VALUES (#{uid},#{pid},#{price})
+    </insert>
+    <delete id="delete">
+        DELETE FROM t_cart
+        WHERE cid = #{cid}
+    </delete>
+    <select id="selectById" resultType="com.mmall.pojo.Cart">
+        SELECT * FROM t_cart
+        WHERE uid=#{arg0} AND pid=#{arg1}
+    </select>
+    <select id="selectByCid" resultType="com.mmall.pojo.Cart">
+        SELECT * FROM t_cart
+        WHERE cid=#{cid}
+    </select>
+    <select id="selectByUid" resultType="com.mmall.util.CartInfo">
+        SELECT t_cart.cid,t_cart.uid,t_cart.pid,t_cart.price,t_product.title,t_product.description,t_product.image
+        FROM t_cart,t_product
+        WHERE t_cart.uid=#{uid} AND t_cart.pid = t_product.id
+    </select>
+</mapper>

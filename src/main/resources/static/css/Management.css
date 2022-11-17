@@ -1,0 +1,61 @@
+/* 输入框 */
+input {
+    width: 60%;
+    height: 40px;
+    margin-bottom: 20px;
+    text-indent: 10px;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgba(255, 255, 255, 0.3);
+    /* 增加磨砂质感 */
+    backdrop-filter: blur(10px);
+}
+
+input:focus {
+    /* 光标颜色 */
+    color: #3ca0f2;
+}
+
+/* 聚焦时隐藏文字 */
+input:focus::placeholder {
+    opacity: 0;
+}
+/* 按钮 */
+button {
+    width: 100px;
+    height: 30px;
+    margin: 0 7px;
+    margin-bottom: 20px;
+    line-height: 30px;
+    border: none;
+    border-radius: 4px;
+    background-color: #69b3f0;
+    color: white;
+}
+
+/* 按钮悬停时 */
+button:hover {
+    /* 鼠标小手 */
+    cursor: pointer;
+    /* 透明度 */
+    opacity: .8;
+}
+
+.insert{
+    width: 1200px;
+    height: 600px;
+    position: relative;
+    align-items: center;
+    display: block;
+    text-align: center;
+    background-color: rgb(219, 219, 219);
+    margin: 0 auto;
+}
+
+a{
+    font-size: 20px;
+}
+.info-table{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

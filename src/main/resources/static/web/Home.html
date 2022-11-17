@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页</title>
+    <!--导入jquery-->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <!-- 引入css -->
+    <link rel="stylesheet" href="../css/Home.css">
+    <!-- 引入导航栏 -->
+    <script type="text/javascript" src="Header.js"></script>
+</head>
+
+<body>
+    <h1 class="TITLE">WELCOME TO MY SHOP</h1>
+    <div id="product-table" class="product-table">
+
+    </div>
+
+    <script>
+        $("#back-color").css("display","grid");
+
+        function color1() {
+            $("body").css("background-image" ,"linear-gradient(to bottom, #c7ff8f, rgb(255, 255, 255))");
+        }
+        function color2() {
+            $("body").css("background-image" ,"linear-gradient(to bottom, #ff7d50, rgb(255, 255, 255))");
+        }
+        function color3() {
+            $("body").css("background-image" ,"linear-gradient(to bottom, #fff47c, rgb(255, 255, 255))");
+        }
+        function color4() {
+            $("body").css("background-image" ,"linear-gradient(to bottom, #66bafc, rgb(255, 255, 255))");
+        }
+    </script>
+
+   <script>
+       $.ajax({
+           url: "/products/selectAll",
+           type: "GET",
+           data: {},
+           dataType: "JSON",
+           success: function (json) {
+               let i;
+               if (json.state == 200) {
+                   let listData = json.data;
+                   if(listData.length > 0){
+                       let listInfo = "";
+                       $.each(listData,function (){
+                           listInfo += "<div class='product-card'>" +
+                               "<h1>"+this.title+"</h1>"+
+                           "<p>"+this.description+"</p>"+
+                               "<img src='"+this.image+"' width='300px' height='300px' title='preview-img'>"+
+                           "<div class='product-info'>"+
+                               "<div class='product-price'>￥"+this.price+"</div>"+
+                           "<a class='product-btn' onclick='cart(\"" + this.id +"\",+\"" + this.price +"\")'>添加到购物车</a></div></div>";
+                       })
+                       $("#product-table").append(listInfo);
+                   }
+               } else {
+                   alert("获取信息失败！" + json.message);
+               }
+           },
+           error: function (xhr) {
+               alert("获取信息时产生未知的错误" + xhr.status);
+           }
+       })
+   </script>
+    <script>
+        function cart(id,price) {
+            $.ajax({
+                url: "/Cart/add",
+                type: "POST",
+                data: "pid="+ id+"&price="+price,
+                dataType: "JSON",
+                success: function (json) {
+                    alert("添加成功")
+                },
+                error: function (xhr) {
+                    location.href = "/web/Login.html"
+                }
+            })
+        }
+    </script>
+</body>
+</html>

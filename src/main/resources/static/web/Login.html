@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入css -->
+    <link rel="stylesheet" href="../css/Login.css">
+    <!--导入jquery-->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <title>注册登录</title>
+</head>
+<body>
+    <div class="box">
+        <!--滑动盒子-->
+        <div class="slide-box">
+            <h1>WELCOME</h1>
+            <div class="slide-img"></div>
+        </div>
+        <!--登录盒子-->
+        <div id="log-form" class="login-form">
+            <div class="title-box">
+                <h1>登录</h1>
+            </div>
+            <div class="input-box">
+                <input id="log-username" type="text" placeholder="用户名">
+                <input id="log-pwd" type="password" placeholder="密码">
+                <div id="login-type">
+                    <input class="radio_type" id="user" type="radio" checked="checked" name="type"/> 用户
+                    <input class="radio_type" type="radio" id="admin" name="type">管理员
+                </div>
+            </div>
+            <div class="button-box">
+                <button id="btn-log">登录</button>
+                <p onclick="MyClick()">
+                    还没有账号?去注册
+                </p>
+            </div>
+        </div>
+        <!--注册盒子-->
+        <div id="reg-form" class="register-form">
+            <div class="title-box">
+                <h1>注册</h1>
+            </div>
+            <div class="input-box">
+                <input id="reg-username" type="text" placeholder="用户名">
+                <p class="tips" id="username-repeat">用户名重复</p>
+                <input id="reg-pwd" type="password" placeholder="密码 6~12位数字或字母">
+                <p class="tips" id="password-length">密码必须为6-12位</p>
+                <input id="reg-repwd" type="password" placeholder="确认密码">
+            </div>
+            <div class="button-box">
+                <button id="btn-reg">注册</button>
+                <p onclick="MyClick()">
+                    已经有账号?去登录
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <!--滑动效果实现-->
+    <script type="text/javascript">
+        let flag = true;
+        const MyClick=()=>{
+            if(flag){
+                $(".slide-box").css("transform", "translateX(100%)")
+                $(".slide-box").css("background-color","rgb(218, 167, 245)")
+                $(".slide-img").css("background-image", "url('../image/login.png')")
+            }
+            else{
+                $(".slide-box").css("transform", "translateX(0%)")
+                $(".slide-box").css("background-color", "rgb(181, 150, 245)")
+                $(".slide-img").css("background-image", "url('../image/reg.png')")
+            }
+            flag = !flag;
+        }
+    </script>
+    <!--注册时用户名和密码的经检测-->
+    <script type="text/javascript">
+        //检测用户名是否符合重复
+        $("#reg-username").on('blur',function checkname() {
+            let name = document.getElementById("reg-username").value;
+            $.ajax({
+                url: "/users/checkName",
+                type: "POST",
+                data: "username="+name,
+                dataType: "JSON",
+                success: function (json) {
+                    if(json.state == 4000) {
+                        $("#username-repeat").css("display","inline");
+                        document.getElementById("btn-reg").disabled=true;
+                    }else {
+                        $("#username-repeat").css("display","none");
+                        document.getElementById("btn-reg").disabled=false;
+                    }
+                },
+                error: function (xhr) {
+                    alert("检测用户名时产生未知的错误"+xhr.status);
+                }
+            })
+        })
+
+        //检测密码是否符合规范
+        $("#reg-pwd").on('blur' ,function () {
+            let pwd = document.getElementById("reg-pwd").value;
+            let re = /^[a-zA-Z0-9]{6,12}$/ ;
+            if(re.test(pwd)){
+                $("#password-length").css("display","none");
+                document.getElementById("btn-reg").disabled=false;
+            }
+            else{
+                $("#password-length").css("display","inline");
+                document.getElementById("btn-reg").disabled=true;
+            }
+        })
+    </script>
+    <!--注册功能前端实现-->
+    <script type="text/javascript">
+        // 监听注册按钮是否被点击
+        $("#btn-reg").click(function () {
+            //校验用户名不为空
+            if(document.getElementById("reg-username").value==""){
+                alert("用户名不能为空");
+                return;
+            }
+            //校验密码不为空
+            if(document.getElementById("reg-pwd").value == ""){
+                alert("密码不能为空");
+                return;
+            }
+            //判断密码和确认密码是否一致
+            let p1 = document.getElementById("reg-pwd").value;
+            let p2 = document.getElementById("reg-repwd").value;
+            if(p1!=p2){
+                alert("密码与确认密码不相同");
+                return;
+            }
+            //发送AJAX的异步请求完成用户注册的功能
+            let name = document.getElementById("reg-username").value;
+            let pwd = document.getElementById("reg-pwd").value;
+            $.ajax({
+                url: "/users/reg",
+                type: "POST",
+                data: "username="+name+"&password="+pwd,
+                dataType: "JSON",
+                success: function (json) {
+                    if(json.state == 200){
+                        alert("注册成功！");
+                        $(".slide-box").css("transform", "translateX(100%)")
+                        $(".slide-box").css("background-color","#ff")
+                    }else {
+                        alert("注册失败！"+json.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert("注册时产生未知的错误"+xhr.status);
+                }
+            })
+
+        })
+    </script>
+    <!--登录功能前端实现-->
+    <script type="text/javascript">
+        $("#btn-log").click(function () {
+            // 获取登录类型、用户名、密码等数据
+            let loginType = document.getElementById("user");
+            let name = document.getElementById("log-username").value;
+            let pwd = document.getElementById("log-pwd").value;
+            //判断用户名和密码是否为空
+            //校验用户名不为空
+            if(document.getElementById("log-username").value==""){
+                alert("用户名不能为空");
+                return;
+            }
+            //校验密码不为空
+            if(document.getElementById("log-pwd").value == ""){
+                alert("密码不能为空");
+                return;
+            }
+            //如果是用户登录
+            if(loginType.checked){
+                // 如果是用户登录
+                $.ajax({
+                    url: "/users/login",
+                    type: "POST",
+                    data: "username="+name+"&password="+pwd,
+                    dataType: "JSON",
+                    success: function (json) {
+                        if(json.state == 200){
+                            alert("登录成功！");
+                            location.href = "Home.html";
+                        }else {
+                            alert("登录失败！"+json.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("登录时产生未知的错误"+xhr.status);
+                    }
+                })
+            }else{
+                //管理员登录
+                $.ajax({
+                    url: "/users/adminLogin",
+                    type: "POST",
+                    data: "username="+name+"&password="+pwd,
+                    dataType: "JSON",
+                    success: function (json) {
+                        if(json.state == 200){
+                            alert("登录成功！");
+                            location.href = "Home.html";
+                        }else {
+                            alert("登录失败！"+json.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("登录时产生未知的错误"+xhr.status);
+                    }
+                })
+            }
+
+        })
+    </script>
+</body>
+</html>

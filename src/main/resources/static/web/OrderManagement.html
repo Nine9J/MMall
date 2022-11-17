@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理</title>
+    <!-- 引入导航栏 -->
+    <script type="text/javascript" src="AdminHeader.js"></script>
+    <link rel="stylesheet" href="../css/Order.css">
+    <link rel="stylesheet" href="../css/Cart.css">
+
+</head>
+<body>
+<h2 class="title">订单管理</h2>
+<div class="main-box" id="main-box">
+    <div class="theme">
+        <div class="th"></div>
+        <div class="th">所属用户</div>
+        <div class="th">商品名</div>
+        <div class="th">单价</div>
+        <div class="th">状态</div>
+        <div class="th">操作</div>
+    </div>
+
+<!--    <div class='pro-card'>-->
+<!--        <div class='pro-info'>-->
+<!--            <img src='/upload/lys.png' width='100px' height='100px' alt='img...' class='img'>-->
+<!--        </div>-->
+<!--        <div class='pro-info'>所属用户</div>-->
+<!--        <div class='pro-info'>商品名</div>-->
+<!--        <div class='pro-info'>单价</div>-->
+<!--        <div class='pro-info'>状态</div>-->
+<!--        <div class='pro-info'>-->
+<!--            <div class='button-conf' onclick='delete("")'>确认发货</div>-->
+<!--            <div class='button-conf' onclick='deleteOrder()'>删除订单</div>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+
+<script>
+    $.ajax({
+        url: "/order/selectAll",
+        type: "GET",
+        data: {},
+        dataType: "JSON",
+        success: function (json) {
+            if (json.state == 200) {
+                let listdata = json.data;
+                if(listdata.length > 0){
+                    let listInfo = ""
+                    $.each(listdata,function (){
+                        listInfo += "<div class='pro-card'>"+
+                            "<div class='pro-info'>"+
+                            "<img src='"+this.image+"' width='100px' height='100px' alt='img...' class='img'>"+
+                            "</div>"+
+                            "<div class='pro-info'>"+this.username+"</div>"+
+                            "<div class='pro-info'>"+this.title+"</div>"+
+                            "<div class='pro-info'>￥ "+this.price+"</div>"+
+                            "<div class='pro-info'>"+this.state+"</div>"+
+                            "<div class='pro-info'>"+
+                            "<div class='button-conf' onclick='confirmDis(\"" + this.oid +"\")'>确认发货</div>"+
+                            "<div class='button-conf' onclick='deleteOrder(\"" + this.oid +"\")'>删除订单</div>"+
+                            "</div></div>"
+                    })
+                    $("#main-box").append(listInfo);
+                }
+            } else {
+                alert("获取信息失败！" + json.message);
+            }
+        },
+        error: function (xhr) {
+            alert("获取信息时产生未知的错误" + xhr.status);
+        }
+    })
+</script>
+<script>
+    function confirmDis(oid) {
+        let r = confirm("确认已经发货?");
+        if(r){
+            $.ajax({
+                url: "/order/confirmDis",
+                type: "POST",
+                data: "oid="+oid,
+                dataType: "JSON",
+                success: function (json){
+                    location.reload();
+                },
+                error: function (xhr){
+                    alert("确认失败"+xhr.state);
+                }
+            })
+        }
+    }
+    function deleteOrder(oid) {
+        let r = confirm("确认删除?");
+        if(r) {
+            $.ajax({
+                url: "/order/delete",
+                type: "POST",
+                data: "oid=" + oid,
+                dataType: "JSON",
+                success: function (json) {
+                    alert("已删除！");
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert("删除失败" + xhr.state);
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

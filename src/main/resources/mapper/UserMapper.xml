@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.mapper.UserMapper">
+    <!--自定义映射规则-->
+    <resultMap id="UserMap" type="com.mmall.pojo.User">
+        <id column="uid" property="uid"></id>
+        <result column="is_admin" property="isAdmin"></result>
+    </resultMap>
+
+    <!--注册对应的插入SQL-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="uid">
+        INSERT INTO t_user (username, password, phone, is_admin)
+        values (#{username}, #{password}, #{phone}, #{isAdmin})
+    </insert>
+
+    <!--根据用户名查询-->
+    <select id="selectByName" resultType="com.mmall.pojo.User" resultMap="UserMap">
+        SELECT * FROM t_user WHERE username=#{username}
+    </select>
+
+    <update id="updatePhoneByUsername">
+        UPDATE t_user
+        SET phone = #{phone}
+        WHERE username=#{username}
+    </update>
+
+    <select id="selectByUid" resultType="com.mmall.pojo.User" resultMap="UserMap">
+        SELECT * FROM t_user WHERE uid=#{uid}
+    </select>
+</mapper>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车</title>
+    <!-- 引入导航栏 -->
+    <script type="text/javascript" src="Header.js"></script>
+
+    <link rel="stylesheet" href="../css/Cart.css">
+    
+    <!--导入jquery-->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+</head>
+<body>
+    <h2 class="title">购物车</h2>
+    <div class="main-box" id="main-box">
+        <div class="theme">
+            <div class="th1">
+                <input type="checkbox" onclick="swapCheck()">全选
+            </div>
+            <div class="th">商品名</div>
+            <div class="th">商品信息</div>
+            <div class="th">单价</div>
+            <div class="th">操作</div>
+        </div>
+<!--        <div class='pro-card'>-->
+<!--            <div class='pro-info'>-->
+<!--                <input type='checkbox' class='cb'>-->
+<!--                <img src='/upload/lys.png' width='100px' height='100px' alt='img...' class='img'>-->
+<!--            </div>-->
+<!--            <div class='pro-info'>名称</div>-->
+<!--            <div class='pro-info'>描述</div>-->
+<!--            <div class='pro-info'>单价</div>-->
+<!--            <div class='pro-info'>-->
+<!--                <div class='button-del' onclick='delete("cid")'>移出购物车</div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </div>
+    <div class="pay-box">
+        <div class="count" id="count">已选 0 件商品</div>
+        <div class="total" id="total">合计: ￥0</div>
+        <div class="btn-box">
+            <div class="pay-button" onclick="Pay()">结 算</div>
+        </div>
+    </div>
+    <script>
+        let productCount = 0;
+        let totalPrice  = 0;
+        let count = 0;
+        let total = 0;
+        $.ajax({
+            url: "/Cart/selectByUid",
+            type: "GET",
+            data: {},
+            dataType: "JSON",
+            async:false,
+            success: function (json) {
+                if (json.state == 200) {
+                    let listData = json.data;
+                    productCount = listData.length;
+                    if(listData.length > 0){
+                        let listInfo = ""
+                        $.each(listData,function (){
+                            totalPrice += Number(this.price);
+                             listInfo += "<div class='pro-card' id='pro-card"+this.cid+"'> "+
+                                 "<div class='pro-info'> "+
+                                 "<input id='"+this.pid+"' value='"+this.price+"&"+this.cid+"' type='checkbox' class='cb' name='select-pro' onclick='cardTrans(this,\"" + this.cid +"\",\"" + this.price +"\")'>" +
+                                 "<img src='"+this.image+"' width='100px' height='100px' alt='img...' class='img'>"+
+                                 "</div> <div class='pro-info'>"+this.title+"</div>"+
+                                 "<div class='pro-info'>"+this.description+"</div>"+
+                                 "<div class='pro-info'>￥ "+this.price+"</div>"+
+                                 "<div class='pro-info'>"+
+                                 "<div class='button-del' onclick='deleteCart(\"" + this.cid +"\")'>移出购物车</div>"+
+                                 "</div></div>";
+                        })
+                        $("#main-box").append(listInfo);
+                    }
+                    }
+                else {
+                    alert("获取信息失败"+json.message);
+                }
+            },
+            error: function (xhr) {
+
+            }
+        })
+    </script>
+    <script>
+        function deleteCart(cid) {
+            let r = confirm("确定删除?");
+            if(r){
+                $.ajax({
+                    url: "/Cart/delete",
+                    type: "POST",
+                    data: "cid="+cid,
+                    dataType: "JSON",
+                    success: function (json){
+                        alert("删除成功");
+                        location.reload();
+                    },
+                    error: function (xhr){
+                        alert("删除失败"+xhr.state);
+                    }
+                })
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        //checkbox 全选/取消全选
+        var isCheckAll = false;
+        function swapCheck() {
+            if (isCheckAll) {
+                $("input[type='checkbox']").each(function() {
+                    this.checked = false;
+                });
+                isCheckAll = false;
+                $(".pro-card").css("border","none");
+                $(".pro-card").css("background","rgb(245,245,245)");
+                $("#count").text("已选择 0 件商品");
+                $("#total").text("合计: ￥0");
+                count = 0;
+                total = 0;
+            } else {
+                $("input[type='checkbox']").each(function() {
+                    this.checked = true;
+                });
+                isCheckAll = true;
+                $(".pro-card").css("border","1px solid rgb(255, 123, 0)");
+                $(".pro-card").css("background","rgb(255, 245, 238)");
+                $("#count").text("已选择 "+productCount+" 件商品");
+                $("#total").text("合计: ￥"+ totalPrice);
+                count = productCount;
+                total = totalPrice;
+            }
+        }
+    </script>
+    <script>
+        function cardTrans(cb,cid,price) {
+            let id = "pro-card"+cid;
+            if(cb.checked){
+                $("#"+id).css("border","1px solid rgb(255, 123, 0)");
+                $("#"+id).css("background","rgb(255, 245, 238)");
+                count++;
+                total += Number(price);
+                $("#count").text("已选择 "+count+" 件商品");
+                $("#total").text("合计: ￥"+ total);
+            }else {
+                $("#"+id).css("border","none");
+                $("#"+id).css("background","rgb(245,245,245)");
+                count--;
+                total-= Number(price);
+                $("#count").text("已选择 "+count+" 件商品");
+                $("#total").text("合计: ￥"+ total);
+            }
+        }
+    </script>
+    <script>
+        function Pay() {
+            let r = confirm("确定购买？");
+            if(r){
+                let myCount = 0;
+                let max = 0;
+                //结算逻辑
+                $('input[name="select-pro"]:checked').each(function(){
+                    // 遍历input输入框中name=select-pro 选中状态的值。
+                    max++;
+                    let pid = this.id;
+                    let index = this.value.indexOf("&");
+                    let price = this.value.slice(0,index);
+                    let cid = this.value.slice(index+1);
+                    $.ajax({
+                        url: "/order/add",
+                        type: "POST",
+                        data: "pid="+pid+"&price="+price,
+                        dataType: "JSON",
+                        async: false,
+                        success: function (json){
+                            myCount++;
+                            $.ajax({
+                                url: "/Cart/delete",
+                                type: "POST",
+                                data: "cid="+cid,
+                                dataType: "JSON",
+                                async: false,
+                                success: function (json){
+                                },
+                                error: function (xhr) {
+                                }
+                            })
+                        },
+                        error: function (xhr) {
+                        }
+                    })
+
+                });
+                if(max==0){
+                    alert("您未勾选任何商品");
+                    return;
+                }
+                if(myCount == max){
+                    alert("购买成功！");
+                    location.reload();
+                    let a = confirm("跳转到订单界面？");
+                    if (a){
+                    location.href = "/web/Orders.html";
+                    }
+                }else {
+                    alert("结算失败");
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>

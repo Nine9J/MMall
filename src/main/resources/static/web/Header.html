@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入css -->
+    <link rel="stylesheet" href="../css/Header.css">
+    <!--导入jquery-->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <title>导航栏</title>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="/web/Home.html">首页</a>
+            <a href="/web/Cart.html" id="Cart">购物车</a>
+            <a href="/web/Orders.html">订单</a>
+            <a href="/web/User.html" id="myUser">用户</a>
+            <div class="animation"></div>
+            <div class="info-box">
+                <p id="username-info" class="info">用户名:</p>
+                <p id="type" class="info">登录类型:</p>
+            </div>
+        </nav>
+        <div id="back-color" class="back-color">
+            <span class="spring" onclick="color1()"></span>
+            <span class="summer" onclick="color2()"></span>
+            <span class="autumn" onclick="color3()"></span>
+            <span class="winter" onclick="color4()"></span>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $.ajax({
+            url: "/users/get_by_uid",
+            type: "GET",
+            data: "",
+            dataType: "JSON",
+            success: function (json) {
+                if(json.state == 5004) {
+                    alert("uid不存在");
+                }else {
+                    $("#username-info").text("用户名:   "+json.data.username);
+                    if(json.data.isAdmin == 1){
+                        $("#type").text("登陆类型:   管理员");
+                        $('#myUser').attr('href','/web/Management.html');
+                        $('#myUser').text("管理员");
+                    }else {
+                        $("#type").text("登陆类型:   用户");
+                    }
+                }
+            },
+            error: function (xhr) {
+            }
+        })
+    </script>
+</body>
+</html>

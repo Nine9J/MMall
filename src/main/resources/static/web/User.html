@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户信息</title>
+    <!-- 引入导航栏 -->
+    <script type="text/javascript" src="Header.js"></script>
+
+    <link rel="stylesheet" href="../css/User.css">
+    <!--导入jquery-->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+    <div class="user-info">
+        <p id="user-username">用户名:</p>
+        <p>电话号码:</p>
+        <input type="tel" id="phone">
+        <button id="update">修改电话</button>
+        <button class="button" id="logout" onclick="logout()">退出登录</button>
+    </div>
+
+    <script type="text/javascript">
+        $.ajax({
+            url: "/users/get_by_uid",
+            type: "GET",
+            data: "",
+            dataType: "JSON",
+            success: function (json) {
+                if(json.state == 5004) {
+                    alert("uid不存在");
+                }else {
+                    $("#user-username").text("用户名:   "+json.data.username);
+                    $("#phone").val(json.data.phone);
+                }
+            },
+            error: function (xhr) {
+                alert("获取信息时产生未知的错误"+xhr.status);
+            }
+        })
+    </script>
+
+    <script type="text/javascript">
+        $("#update").click(function () {
+            let phone = document.getElementById("phone").value;
+            $.ajax({
+                url: "/users/updatePhone",
+                type: "POST",
+                data: "phone=" + phone,
+                dataType: "JSON",
+                success: function (json) {
+                    if(json.state == 5003) {
+                        alert("Session过期");
+                    }else {
+                        alert("修改成功");
+                    }
+                },
+                error: function (xhr) {
+                    alert("修改时产生未知的错误"+xhr.status);
+                }
+            })
+        })
+
+    </script>
+    <script>
+        function logout() {
+            let r = confirm("确认退出登录？");
+            if(r){
+                $.ajax({
+                    url: "/users/logout",
+                    type: "POST",
+                    data: {},
+                    dataType: "JSON",
+                    success: function (json) {
+                        if(json.state == 5003) {
+                            alert("Session过期");
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("注销时产生未知的错误"+xhr.status);
+                    }
+                })
+                location.reload();
+            }
+            }
+
+    </script>
+</body>
+</html>
